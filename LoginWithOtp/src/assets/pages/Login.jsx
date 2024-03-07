@@ -1,14 +1,15 @@
 import React, { useState } from 'react'
 import '../styles/mix.css'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 import { sentOtpFunction } from '../services/Apis';
 
 
 const Login = () => {
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
-  const sendOtp = async(e) => {
+  const sendOtp = async (e) => {
     e.preventDefault();
 
     if (email === "") {
@@ -18,10 +19,18 @@ const Login = () => {
       toast.error("Enter a valid email address")
     } else {
       const data = {
-        email :email
+        email: email
       }
       const response = await sentOtpFunction(data)
-      console.log(response);
+      // console.log(response);
+
+      if (response.status === 200) {
+        navigate("/user/otp" ,{state:email})
+      } else {
+        toast.error(response.response.data.error)
+
+      }
+
     }
 
   }

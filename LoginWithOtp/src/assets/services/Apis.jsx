@@ -8,3 +8,7 @@ export const registerfunction = async(data)=>{
 export const sentOtpFunction = async(data)=>{
     return await commonRequest("POST" , `${BACKEND_URL}/user/sendOtp` , data)
 }
+
+export const userVerify = async(data)=>{
+    return await commonRequest("POST" , `${BACKEND_URL}/user/login` , data)
+}

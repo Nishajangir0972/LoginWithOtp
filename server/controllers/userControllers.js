@@ -66,7 +66,7 @@ export const userSendOtp = async (req, res) => {
                     from: process.env.EMAIL,
                     to: email,
                     subject: "Sending Email For otp validation",
-                    text: `OTP - ${OTP}`
+                    text: `OTP: - ${OTP}`
                 }
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -91,7 +91,7 @@ export const userSendOtp = async (req, res) => {
                     from: process.env.EMAIL,
                     to: email,
                     subject: "Sending Email For otp validation",
-                    text: `OTP - ${OTP}`
+                    text: `OTP: - ${OTP}`
                 }
 
                 transporter.sendMail(mailOptions, (error, info) => {
@@ -112,5 +112,58 @@ export const userSendOtp = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: "Invalid Details", error })
 
+    }
+}
+
+
+
+// export const userLogin = async(req, res) => {
+//     const { email, otp } = req.body;
+//     console.log(req.body);
+
+//     if (!otp || !email) {
+//         res.status(400).json({ error: "Please Enter Your Otp and Email" })
+//     }
+//     try {
+//         const otpverification = await user.findOne({ email: email });
+
+//         if (otpverification.otp === otp) {
+//             const preUsers = await user.findOne({ email: email });
+
+//             const token = await preUsers.generateAuthtoken()
+//             console.log(token);
+
+
+//         } else {
+//             res.status(400).json({ error: "Invalid Otp" })
+//         }
+//     } catch (error) {
+//         res.status(400).json({ error: "Invalid Details", error })
+//     }
+// }
+
+export const userLogin = async(req,res)=>{
+    const {email,otp} = req.body;
+
+    if(!otp || !email){
+        res.status(400).json({ error: "Please Enter Your OTP and email" })
+    }
+
+    try {
+        const otpverification = await OtpSchema.findOne({email:email});
+
+        if(otpverification.otp === otp){
+            const preuser = await user.findOne({email:email});
+
+            // token generate
+            const token = await preuser.generateAuthtoken();
+            // console.log(token);
+           res.status(200).json({message:"User Login Succesfully Done",userToken:token});
+
+        }else{
+            res.status(400).json({error:"Invalid Otp"})
+        }
+    } catch (error) {
+        res.status(400).json({ error: "Invalid Details", error })
     }
 }
