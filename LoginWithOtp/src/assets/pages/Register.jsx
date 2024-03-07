@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import '../styles/mix.css'
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { registerfunction } from '../services/Apis';
 
 
 const Register = () => {
@@ -12,6 +13,8 @@ const Register = () => {
     password: ""
   })
 
+  const navigate = useNavigate();
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setInValue({ ...inValue, [name]: value })
@@ -19,24 +22,31 @@ const Register = () => {
   }
 
 
-  const handleSubmit = (e)=>{
-e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault()
 
-const {fname , email, password} = inValue;
+    const { fname, email, password } = inValue;
 
-if(fname === ""){
-  toast.error("Enter Your name")
-}else if(email === ""){
-toast.error("Enter Your Email")
-}else if(!email.includes('@')){
-  toast.error("Enter valid Email")
-}else if(password === ""){
-  toast.error("Enter your Password")
-}else if(password.length < 6){
-  toast.error("Password must be 6 didgit")
-}else{
-  toast.success("Successfully sign up")
-}
+    if (fname === "") {
+      toast.error("Enter Your name")
+    } else if (email === "") {
+      toast.error("Enter Your Email")
+    } else if (!email.includes('@')) {
+      toast.error("Enter valid Email")
+    } else if (password === "") {
+      toast.error("Enter your Password")
+    } else if (password.length < 6) {
+      toast.error("Password must be 6 didgit")
+    } else {
+      const response = await registerfunction(inValue)
+      if(response.status === 200){
+        setInValue({...inValue , fname:"" , email:"" , password:""})
+        navigate("/")
+      }
+      else{
+        toast.error(response.response.data.error)
+      }
+    }
 
 
 
